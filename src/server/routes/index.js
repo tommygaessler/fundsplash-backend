@@ -11,6 +11,15 @@ router.get('/', function (req, res, next) {
   res.json('json');
 });
 
+router.get('/test', function(req, res, next) {
+
+  if (true) {
+    req.session.token = "sdlfjnlaksdnf3j1920rj201rjioewfn";
+  }
+
+  res.send(req.session);
+});
+
 router.post('/auth', function (req, res, next) {
 
   const code = req.body.code;
@@ -38,13 +47,14 @@ router.post('/auth', function (req, res, next) {
 
       console.log(data);
 
-      res.json(data);
+      res.json(
+        {
+          data: data,
+          session: access_token
+        }
+      );
     });
   });
 });
-
-// router.get('/token', function (req, res, next) {
-//   res.json(res);
-// });
 
 module.exports = router;
