@@ -14,15 +14,15 @@ router.get('/', function (req, res, next) {
 router.get('/test', function(req, res, next) {
 
   if (true) {
-    req.session.token = "sdlfjnlaksdnf3j1920rj201rjioewfn";
+    req.session.token = 'sdlfjnlaksdnf3j1920rj201rjioewfn';
   }
 
   res.send(req.session);
 });
 
-router.post('/auth', function (req, res, next) {
+router.get('/auth', function(req, res, next) {
 
-  const code = req.body.code;
+  const code = req.query.code;
 
   request({
     url: `https://unsplash.com/oauth/token?client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect_uri}&code=${code}&grant_type=${grant_type}`,
@@ -32,8 +32,6 @@ router.post('/auth', function (req, res, next) {
     body = JSON.parse(body);
 
     const access_token = body.access_token;
-
-    console.log(access_token);
 
     request({
       url: `https://api.unsplash.com/me`,
@@ -47,14 +45,15 @@ router.post('/auth', function (req, res, next) {
 
       console.log(data);
 
-      res.json(
-        {
-          data: data,
-          session: access_token
-        }
-      );
+      // put some stuff in the database
+
+      res.redirect('http://localhost:8888/#/auth');
     });
   });
+});
+
+router.get('/profile', (req, res, next) => {
+  // access the stuff in database, send back info and token to be logged in
 });
 
 module.exports = router;
