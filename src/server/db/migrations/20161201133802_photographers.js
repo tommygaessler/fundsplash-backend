@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
     table.string('last_name');
     table.string('portfolio_url');
     table.string('bio');
-    table.string('location');
+    table.string('current_location');
     table.string('profile_image');
     table.string('instagram_username');
     table.string('email');

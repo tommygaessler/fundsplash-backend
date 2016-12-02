@@ -5,7 +5,7 @@ exports.seed = function(knex, Promise) {
       knex('campaigns')
       .insert({
         photographer_id: photographers[0].id,
-        status: 'funded',
+        status: 'active',
         location: 'Spain',
         sample_photo_1: 'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=3c83e9efe180115b8a467097379fd686',
         sample_photo_2: 'https://images.unsplash.com/photo-1452457750107-cd084dce177d?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=f60ba2cf0ef63152bd4e0cf9c0476049',
