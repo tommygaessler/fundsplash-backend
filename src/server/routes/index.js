@@ -37,7 +37,12 @@ router.post('/auth', function(req, res, next) {
 
       const username = data.username;
 
-      res.json(data);
+      res.json(
+        {
+          data: data,
+          token: access_token
+        }
+      );
 
       // knex('photographers').where('username', username)
       // .then((user) => {
@@ -72,6 +77,16 @@ router.post('/auth', function(req, res, next) {
       // put profile stuff in db
       // put photos in db
     });
+  });
+});
+
+router.get('/campaigns', function(req, res, next) {
+  knex('campaigns').innerJoin('photographers', 'photographers.id', 'campaigns.photographer_id')
+  .then((campaigns) => {
+    res.json(campaigns);
+  })
+  .catch((error) => {
+    console.log(error);
   });
 });
 
