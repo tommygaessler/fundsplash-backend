@@ -20,7 +20,7 @@ router.post('/auth', function(req, res, next) {
     url: `https://unsplash.com/oauth/token?client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect_uri}&code=${code}&grant_type=${grant_type}`,
     method: 'POST'
   }, function(error, response, body) {
-    // res.json({ error, response, body })
+
     body = JSON.parse(body);
 
     const access_token = body.access_token;
@@ -37,45 +37,44 @@ router.post('/auth', function(req, res, next) {
 
       const username = data.username;
 
-      res.json(
-        {
-          data: data,
-          token: access_token
+      knex('photographers').where('username', username)
+      .then((user) => {
+        if (user.length) {
+          console.log('existing user', user[0]);
+          res.json(
+            {
+              data: user[0]
+            }
+          );
+        } else {
+          return knex('photographers').insert({
+            username: username,
+            name: data.name,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            portfolio_url: data.portfolio_url,
+            bio: data.bio,
+            current_location: data.location,
+            profile_image: data.profile_image.large,
+            instagram_username: data.instagram_username,
+            email: data.email,
+            badge: data.badge,
+            unsplash_url: data.links.html,
+            total_likes: data.total_likes,
+            total_photos: data.total_photos,
+            downloads: data.downloads,
+            access_token: access_token
+          }).returning('*')
+          .then((newUser) => {
+            console.log('new user', newUser[0]);
+            res.json(
+              {
+                data: newUser[0]
+              }
+            );
+          });
         }
-      );
-
-      // knex('photographers').where('username', username)
-      // .then((user) => {
-      //   if (user.length) {
-      //     // redirect to profile
-      //     res.redirect('http://localhost:8888/#/auth');
-      //   } else {
-      //     return knex('photographers').insert({
-      //       username: username,
-      //       name: data.name,
-      //       first_name: data.first_name,
-      //       last_name: data.last_name,
-      //       portfolio_url: data.portfolio_url,
-      //       bio: data.bio,
-      //       location: data.location,
-      //       profile_image: data.profile_image.large,
-      //       instagram_username: data.instagram_username,
-      //       email: data.email,
-      //       badge: data.badge,
-      //       unsplash_url: data.links.html,
-      //       total_likes: data.total_likes,
-      //       total_photos: data.total_photos,
-      //       downloads: data.downloads,
-      //       access_token: access_token
-      //     })
-      //     .then((newUser) => {
-      //       // redirect to new user section
-      //       res.redirect('http://localhost:8888/#/auth');
-      //     });
-      //   }
-      // });
-      // put profile stuff in db
-      // put photos in db
+      });
     });
   });
 });
