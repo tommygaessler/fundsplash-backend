@@ -37,43 +37,58 @@ router.post('/auth', function(req, res, next) {
 
       const username = data.username;
 
-      knex('photographers').where('username', username)
-      .then((user) => {
-        if (user.length) {
-          console.log('existing user', user[0]);
-          res.json(
-            {
-              data: user[0]
-            }
-          );
-        } else {
-          return knex('photographers').insert({
-            username: username,
-            name: data.name,
-            first_name: data.first_name,
-            last_name: data.last_name,
-            portfolio_url: data.portfolio_url,
-            bio: data.bio,
-            current_location: data.location,
-            profile_image: data.profile_image.large,
-            instagram_username: data.instagram_username,
-            email: data.email,
-            badge: data.badge,
-            unsplash_url: data.links.html,
-            total_likes: data.total_likes,
-            total_photos: data.total_photos,
-            downloads: data.downloads,
-            access_token: access_token
-          }).returning('*')
-          .then((newUser) => {
-            console.log('new user', newUser[0]);
+      request({
+        url: `https://api.unsplash.com/users/${username}/photos?per_page=30`,
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      }, function(error, response, photos) {
+
+        photos = JSON.parse(photos);
+
+        console.log(photos);
+
+        knex('photographers').where('username', username)
+        .then((user) => {
+          if (user.length) {
+            console.log('existing user', user[0]);
             res.json(
               {
-                data: newUser[0]
+                data: user[0],
+                photos: photos
               }
             );
-          });
-        }
+          } else {
+            return knex('photographers').insert({
+              username: username,
+              name: data.name,
+              first_name: data.first_name,
+              last_name: data.last_name,
+              portfolio_url: data.portfolio_url,
+              bio: data.bio,
+              current_location: data.location,
+              profile_image: data.profile_image.large,
+              instagram_username: data.instagram_username,
+              email: data.email,
+              badge: data.badge,
+              unsplash_url: data.links.html,
+              total_likes: data.total_likes,
+              total_photos: data.total_photos,
+              downloads: data.downloads,
+              access_token: access_token
+            }).returning('*')
+            .then((newUser) => {
+              console.log('new user', newUser[0]);
+              res.json(
+                {
+                  data: newUser[0],
+                  photos: photos
+                }
+              );
+            });
+          }
+        });
       });
     });
   });
@@ -86,6 +101,18 @@ router.get('/campaigns', function(req, res, next) {
   })
   .catch((error) => {
     console.log(error);
+  });
+});
+
+router.post('/campaign', function(req, res, next) {
+  console.log(req.body);
+  knex('campaigns').insert({
+    photographer_id: req.body.photographer_id,
+    location: req.body.location,
+    description: req.bodydescription,
+    goal: req.body.goal
+  }).then((campaign) => {
+    res.json('success');
   });
 });
 
