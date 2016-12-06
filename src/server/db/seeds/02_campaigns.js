@@ -12,7 +12,8 @@ exports.seed = function(knex, Promise) {
         sample_photo_3: 'https://images.unsplash.com/photo-1452457779869-0a9ebbbdee99?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=a854903a07cf7e0d8644fda560915234',
         description: 'I want to go to Spain because it would be really fun!',
         goal: 10000,
-        raised: 20000
+        raised: 20000,
+        ends_at: '2016-12-25 12:21:25.142377-07'
       }),
 
       knex('campaigns')
@@ -25,7 +26,8 @@ exports.seed = function(knex, Promise) {
         sample_photo_3: 'https://images.unsplash.com/photo-1474224160858-bde653bbc5a8?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=e6d89696e2cb130c8bf6d8e4f6f22632',
         description: 'I want to go to Israel because it would be really fun!',
         goal: 9000,
-        raised: 5000
+        raised: 5000,
+        ends_at: '2017-1-06 12:21:25.142377-07'
       }),
 
       knex('campaigns')
@@ -38,7 +40,8 @@ exports.seed = function(knex, Promise) {
         sample_photo_3: 'https://images.unsplash.com/photo-1428954376791-d9ae785dfb2d?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=e5f566197bac4630b79de8e25e206727',
         description: 'I want to go to Brazil because it would be really fun!',
         goal: 2000,
-        raised: 100
+        raised: 100,
+        ends_at: '2016-12-6 12:21:25.142377-07'
       })
     ]);
   });
