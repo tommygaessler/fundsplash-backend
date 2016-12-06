@@ -49,8 +49,6 @@ router.post('/auth', function(req, res, next) {
 
         photos = JSON.parse(photos);
 
-        console.log(photos);
-
         knex('photographers').where('username', username)
         .then((user) => {
           if (user.length) {
@@ -116,7 +114,7 @@ router.get('/campaign/:photographer_id', function(req, res, next) {
 });
 
 router.post('/campaign', function(req, res, next) {
-  console.log(req.body);
+
   knex('campaigns').insert({
     photographer_id: req.body.photographer_id,
     location: req.body.location,
@@ -124,7 +122,8 @@ router.post('/campaign', function(req, res, next) {
     goal: req.body.goal,
     sample_photo_1: req.body.sample_photo_1,
     sample_photo_2: req.body.sample_photo_2,
-    sample_photo_3: req.body.sample_photo_3
+    sample_photo_3: req.body.sample_photo_3,
+    ends_at: req.body.ends_at
   }).then((campaign) => {
     res.json('success');
   });

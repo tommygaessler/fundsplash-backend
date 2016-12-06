@@ -11,6 +11,7 @@ exports.up = function(knex, Promise) {
     table.text('description');
     table.integer('goal');
     table.float('raised');
+    table.timestamp('ends_at');
   }));
 };
 
