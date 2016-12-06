@@ -131,7 +131,7 @@ router.post('/campaign', function(req, res, next) {
 });
 
 router.post('/stripe', function(req, res, next) {
-  
+
   stripe.charges.create({
     amount: 2000,
     currency: "usd",
@@ -142,21 +142,52 @@ router.post('/stripe', function(req, res, next) {
       res.json(err);
     } else {
 
-      stripe.balance.retrieve(function(err, balance) {
+      var user_balance = charge.amount / 100;
 
-        user_balance = balance.available[0].amount + balance.pending[0].amount;
+      const data = {
+        charge: charge.amount / 100,
+        balance: user_balance,
+        paid: charge.paid,
+        status: charge.status,
+        seller_message: charge.outcome.seller_message,
+        description: charge.description,
+        email: req.body.token.email,
+        username: req.body.campaign.username,
+        location: req.body.campaign.location,
+        profile_image: req.body.campaign.profile_image,
+        unsplash_url: req.body.campaign.unsplash_url,
+        photographer_id: req.body.campaign.photographer_id
+      }
 
-        const data = {
-          charge: charge.amount,
-          balance: user_balance,
-          paid: charge.paid,
-          status: charge.status,
-          seller_message: charge.outcome.seller_message,
-          description: charge.description
-        }
+      knex('campaigns').where('photographer_id', data.photographer_id)
+      .select('raised')
+      .then((raised) => {
 
-        res.json(data);
-      });
+        data.balance+=raised[0].raised;
+
+        return knex('campaigns').where('photographer_id', data.photographer_id).update({
+          'raised': data.balance
+        })
+        .then((raised) => {
+          var helper = require('sendgrid').mail;
+          var from_email = new helper.Email('info@fundsplash.com');
+          var to_email = new helper.Email(data.email);
+          var subject = `Fundsplash Contribution`;
+          var content = new helper.Content('text/html', `<img src="${data.profile_image}" style="border-radius:50%; margin:auto; display:block"><p style="text-align:center">Thank you for contributing to <a href="${data.unsplash_url}">@${data.username}'s</a> trip to ${data.location}!</p>`);
+          var mail = new helper.Mail(from_email, subject, to_email, content);
+
+          var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+          var request = sg.emptyRequest({
+            method: 'POST',
+            path: '/v3/mail/send',
+            body: mail.toJSON(),
+          });
+
+          sg.API(request, function(error, response) {
+            res.json(data);
+          });
+        })
+      })
     }
   });
 });
