@@ -10,7 +10,7 @@ exports.up = function(knex, Promise) {
     table.string('sample_photo_3');
     table.text('description');
     table.integer('goal');
-    table.integer('raised');
+    table.float('raised');
   }));
 };
 
