@@ -107,7 +107,7 @@ router.get('/campaigns', function(req, res, next) {
 router.get('/campaign/:photographer_id', function(req, res, next) {
 
   const photographer_id = req.params.photographer_id;
-  knex('campaigns').where('photographer_id', photographer_id)
+  knex('campaigns').where('photographer_id', photographer_id).innerJoin('photographers', 'photographers.id', 'campaigns.photographer_id')
   .then((campaign) => {
     res.json(campaign[0]);
   });
@@ -123,7 +123,8 @@ router.post('/campaign', function(req, res, next) {
     sample_photo_1: req.body.sample_photo_1,
     sample_photo_2: req.body.sample_photo_2,
     sample_photo_3: req.body.sample_photo_3,
-    ends_at: req.body.ends_at
+    ends_at: req.body.ends_at,
+    raised: req.body.raised
   }).then((campaign) => {
     res.json('success');
   });
